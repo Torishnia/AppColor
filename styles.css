@@ -45,3 +45,26 @@
     background: rgba(0, 0, 0, 0.1);
     cursor: pointer;
   }
+
+  #copy {
+  position: absolute;
+  left: 590px;
+  top: 60px;
+  margin: 25px 0;
+  width: 100px;
+  height: 25px;
+  border: none;
+  border-radius: 10px;
+  color: ghostwhite;
+  text-align: center;
+  font-size: 16px;
+  font-family: 'Roboto', sans-serif;
+}
+
+.copy_show {
+  display: initial;
+}
+
+.copy_hide {
+  display: none;
+}

@@ -1,9 +1,10 @@
 const cols = document.querySelectorAll('.col');
+document.getElementById('copy').classList.add('copy_hide');
 
 document.addEventListener('keydown', event => {
     event.preventDefault();
     if (event.code.toLowerCase() === 'space') {
-        setRandomColors()
+        setRandomColors();
     }
 })
 
@@ -18,6 +19,8 @@ document.addEventListener('click', event => {
 
         node.classList.toggle('fa-lock-open');
         node.classList.toggle('fa-lock');
+    } else if (type === 'copy') {
+        copyToClipboard(event.target.textContent);
     }
 })
 
@@ -31,23 +34,46 @@ document.addEventListener('click', event => {
     return '#' + color
 }*/
 
-function setRandomColors() {
-    cols.forEach((col) => {
+function copyToClipboard(text) {
+    return navigator.clipboard.writeText(text);
+}
+
+function copyToClipboard(text) {
+    document.getElementById('copy').classList.remove('copy_hide');
+    document.getElementById('copy').classList.add('copy_show');
+    setTimeout(() => {
+      document.getElementById('copy').classList.remove('copy_show');
+      document.getElementById('copy').classList.add('copy_hide');
+    }, 2000);
+    return navigator.clipboard.writeText(text);
+  }
+
+function setRandomColors(isInitial) {
+    const colors = isInitial ? getColorsFromHash() : [];
+
+    cols.forEach((col, index) => {
         const isLocked = col.querySelector('i').classList.contains('fa-lock');
         const text = col.querySelector('h2');
         const button = col.querySelector('button');
-        const color = chroma.random();  // generateRandomColor();
 
         if (isLocked) {
+            colors.push(text.textContent);
             return
+        }
+
+        const color = isInitial ? colors[index] : chroma.random();  // generateRandomColor();
+
+        if (!isInitial) {
+            colors.push(color);
         }
 
         text.textContent = color;
         col.style.background = color;
 
         setTextColor(text, color);
-        setTextColor(button, color)
+        setTextColor(button, color);
     })
+    updateColorsHash(colors);
 }
 
 function setTextColor(text, color) {
@@ -56,4 +82,20 @@ function setTextColor(text, color) {
     text.style.color = luminance > 0.5 ? 'black' : 'white';
 }
 
-setRandomColors()
+function updateColorsHash(colors = []) {
+    document.location.hash = colors
+    .map(col => col.toString().substring(1))
+    .join('-');
+}
+
+function getColorsFromHash() {
+    if (document.location.hash.length > 1) {
+       return document.location.hash
+       .substring(1)
+       .split('-')
+       .map(color => '#' + color);
+    }
+    return [];
+}
+
+setRandomColors(true);
